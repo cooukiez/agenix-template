@@ -22,7 +22,7 @@ let
           };
 
           vars = mkOption {
-            type = attrsOf str;
+            type = attrsOf path;
             description = ''
               Mapping of variable names to files, typical usage:
 
@@ -76,9 +76,9 @@ in
 {
   options.age-template = {
     directory = mkOption {
-      type = types.str;
+      type = types.path;
       description = "Default directory to create output files in";
-      default = "\${XDG_RUNTIME_DIR}/agenix-template";
+      default = "${config.home.homeDirectory}";
     };
 
     files = mkOption {
