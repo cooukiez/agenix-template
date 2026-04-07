@@ -78,7 +78,7 @@ in
     directory = mkOption {
       type = types.path;
       description = "Default directory to create output files in";
-      default = "/run/user/${home.uid}/agenix-template";
+      default = "/run/user/${config.home.uid}/agenix-template";
     };
 
     files = mkOption {
