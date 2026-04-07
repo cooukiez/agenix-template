@@ -78,7 +78,7 @@ in
     directory = mkOption {
       type = types.path;
       description = "Default directory to create output files in";
-      default = "${config.home.homeDirectory}";
+      default = "${config.xdg.runtimeDir}";
     };
 
     files = mkOption {
