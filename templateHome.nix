@@ -78,7 +78,7 @@ in
     directory = mkOption {
       type = types.path;
       description = "Default directory to create output files in";
-      default = "/run/user/${config.home.uid}/agenix-template";
+      default = "\${XDG_RUNTIME_DIR}/agenix-template";
     };
 
     files = mkOption {
