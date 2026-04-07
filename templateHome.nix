@@ -22,7 +22,7 @@ let
           };
 
           vars = mkOption {
-            type = attrsOf path;
+            type = attrsOf str;
             description = ''
               Mapping of variable names to files, typical usage:
 
