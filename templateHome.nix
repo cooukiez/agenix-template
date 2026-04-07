@@ -76,7 +76,7 @@ in
 {
   options.age-template = {
     directory = mkOption {
-      type = types.path;
+      type = types.str;
       description = "Default directory to create output files in";
       default = "\${XDG_RUNTIME_DIR}/agenix-template";
     };
