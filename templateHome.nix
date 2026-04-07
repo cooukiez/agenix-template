@@ -64,18 +64,6 @@ let
             default = "${cfg.directory}/${config.name}";
           };
 
-          owner = mkOption {
-            type = str;
-            description = "User to own the output file";
-            default = "0";
-          };
-
-          group = mkOption {
-            type = str;
-            description = "Group to own the output file";
-            default = "0";
-          };
-
           mode = mkOption {
             type = str;
             description = "Permissions mode for the output file";
@@ -90,7 +78,7 @@ in
     directory = mkOption {
       type = types.path;
       description = "Default directory to create output files in";
-      default = "/run/agenix-template";
+      default = "${config.home.sessionVariables.XDG_RUNTIME_DIR}/agenix-template";
     };
 
     files = mkOption {
@@ -128,7 +116,8 @@ in
             set -eo pipefail
 
             mkdir -p ${eDir}
-            chmod 701 ${eDir}
+            # only executed by current user
+            chmod 700 ${eDir}
 
             ${setEnvScript}
             ${pkgs.gettext}/bin/envsubst \
@@ -136,16 +125,18 @@ in
               < ${eInput} > ${eOutput}
 
             chmod ${escapeShellArg entry.mode} ${eOutput}
-            chown ${escapeShellArg (entry.owner + ":" + entry.group)} ${eOutput}
           '';
         in
         {
           name = templateName;
-          value = stringAfter [ "etc" "agenix" ] "${activationScript}";
+          # Ensure execution happens after agenix secrets are decrypted and the HM write boundary.
+          value = config.lib.dag.entryAfter [ "agenix" "writeBoundary" ] ''
+            $DRY_RUN_CMD ${activationScript}
+          '';
         };
     in
     mkIf (cfg.files != { }) {
       # Create an output file during activation for each entry in files.
-      system.activationScripts = attrsets.mapAttrs' mkScript cfg.files;
+      home.activation = attrsets.mapAttrs' mkScript cfg.files;
     };
 }
